@@ -56,7 +56,8 @@ ENDITER = 100
 
 # Download OpenBerlinData population data from: "https://svn.vsp.tu-berlin.de/repos/public-svn/matsim/scenarios/countries/de/berlin/berlin-v5.5-1pct/output-berlin-v5.5-1pct/output_persons.csv.gz";
 
-DATA_LOCATION = "/media/mk/McDrive/my_abm/input_data/"
+
+DATA_LOCATION = "/media/mk/McDrive/jabm_data/"
 DATA_NAME = "berlin-v5.5.3-1pct.output_persons.csv"
 
 OUTPUT_LOCATION = "output/"
