@@ -54,8 +54,9 @@ SEEDS = 10
 ENDITER = 100
 
 
-# Download OpenBerlinData population data from: "https://svn.vsp.tu-berlin.de/repos/public-svn/matsim/scenarios/countries/de/berlin/berlin-v5.5-1pct/output-berlin-v5.5-1pct/output_persons.csv.gz";
-
+# Download and gunzip OpenBerlinData population data from:
+# "https://svn.vsp.tu-berlin.de/repos/public-svn/matsim/scenarios/countries/de/berlin/berlin-v5.5-1pct/output-berlin-v5.5-1pct/output_persons.csv.gz";
+# edit DATA_LOCAITON and DATA_NAME
 
 DATA_LOCATION = "/media/mk/McDrive/jabm_data/"
 DATA_NAME = "berlin-v5.5.3-1pct.output_persons.csv"
