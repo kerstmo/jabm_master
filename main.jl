@@ -31,9 +31,9 @@ using Dates
 
 
 #define population parameters
-POP_SIZE = -1 #10000
-HH_SIZE = -1  #5
-HH_NUMBER = -1 #POP_SIZE/HH_SIZE
+POP_SIZE = 10000 #10000
+HH_SIZE = 5  #5
+HH_NUMBER = POP_SIZE/HH_SIZE
 
 # define contact parameters relevant for infection
 MAX_CONTACTS_HH = 5
@@ -64,14 +64,14 @@ DATA_NAME = "berlin-v5.5.3-1pct.output_persons.csv"
 OUTPUT_LOCATION = "output/"
 
 #which modules shall the programm use?
-populationBuilder = "matsimPopulation.jl"
+populationBuilder = "randomPopulation.jl"
 contactBuilder = "randomContacts.jl"
 initialInfections = "randomInitInfections.jl"
 initialVaccinations ="randomInitVaccinations.jl"
 infectionModel = "randomAndHouseholdInfectionModel.jl"
 
 # whether contacts are updatd daily (ito. per each iteration) or remain same
-update_contacts = false
+update_contacts = true
 
 include("./runner.jl") # handles one realisation
 

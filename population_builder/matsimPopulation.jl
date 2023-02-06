@@ -33,7 +33,6 @@ POP_SIZE = size(popdata,1)
 println("load population data... DONE")
 
 
-
 println("------------")
 println("Create Agents ....")
 global z = 1

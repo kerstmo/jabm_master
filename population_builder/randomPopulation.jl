@@ -42,6 +42,8 @@ end
 agent_dict = Dict()
 household_dict = Dict()
 
+
+
 for i in 1:HH_NUMBER
 
     local hh_agent_list = []
