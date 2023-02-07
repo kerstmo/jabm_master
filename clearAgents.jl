@@ -4,9 +4,9 @@ vaccinated_agents = []
 infected_agents = []
 
 # reset agents to default
-for i in agent_id_list
+for i in keys(agent_dict)
     agent_dict[i].state = "susceptible"
-    agent_dict[i].hh_iso = false
+    agent_dict[i].in_quar = false
     agent_dict[i].time_infected = -1
     agent_dict[i].time_recov = -1
     agent_dict[i].contacts_hh = []

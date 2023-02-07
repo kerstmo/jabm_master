@@ -79,47 +79,47 @@ open(data, "r") do f
             #
             if occursin("home", line)
                 local this_actType = "home"
-                local this_containerID = replace(replace(string(rsplit(rsplit(this_line, "\" actType=")[2], "_")[2]), " " => ""), "\"/>" => "")
+                local this_containerID = replace(replace(string(rsplit(rsplit(line, "\" actType=")[2], "_")[2]), " " => ""), "\"/>" => "")
             elseif occursin("leisure", line)
                 local this_actType = "leisure"
-                local this_containerID = replace(replace(string(rsplit(rsplit(this_line, "\" actType=")[2], "_")[2]), " " => ""), "\"/>" => "")
+                local this_containerID = replace(replace(string(rsplit(rsplit(line, "\" actType=")[2], "_")[2]), " " => ""), "\"/>" => "")
             elseif occursin("shopping", line)
                 local this_actType = "shopping"
-                local this_containerID = replace(replace(string(rsplit(rsplit(this_line, "\" actType=")[2], "_")[2]), " " => ""), "\"/>" => "")
+                local this_containerID = replace(replace(string(rsplit(rsplit(line, "\" actType=")[2], "_")[2]), " " => ""), "\"/>" => "")
             elseif occursin("other", line)
                 local this_actType = "other"
-                local this_containerID = replace(replace(string(rsplit(rsplit(this_line, "\" actType=")[2], "_")[2]), " " => ""), "\"/>" => "")
+                local this_containerID = replace(replace(string(rsplit(rsplit(line, "\" actType=")[2], "_")[2]), " " => ""), "\"/>" => "")
             elseif occursin("freight", line) & ! occursin("freight interaction", line)
                 local this_actType = "freight"
             #
             #
             elseif occursin("car interaction", line)
                 local this_actType = "car interaction"
-                local this_containerID = rsplit(rsplit(this_line, "\" link=")[2], " x")[1]
+                local this_containerID = rsplit(rsplit(line, "\" link=")[2], " x")[1]
             elseif occursin("pt interaction", line)
                 local this_actType = "pt interaction"
-                local this_containerID = rsplit(rsplit(this_line, "\" link=")[2], " x")[1]
+                local this_containerID = rsplit(rsplit(line, "\" link=")[2], " x")[1]
             elseif occursin("ride interaction", line)
                 local this_actType = "ride interaction"
-                local this_containerID = rsplit(rsplit(this_line, "\" link=")[2], " x")[1]
+                local this_containerID = rsplit(rsplit(line, "\" link=")[2], " x")[1]
             elseif occursin("freight interaction", line)
                 local this_actType = "freight interaction"
-                local this_containerID = rsplit(rsplit(this_line, "\" link=")[2], " x")[1]
+                local this_containerID = rsplit(rsplit(line, "\" link=")[2], " x")[1]
             #
             #
             elseif occursin("PersonEntersVehicle", line) & occursin("legMode=\"pt\"", line)
                 local this_actType = "enterVehiclePt"
-                local this_containerID = replace(replace(string(rsplit(rsplit(this_line, "\" vehicle=")[2], "_")[2]), " " => ""), "\"/>" => "")
-            elseif occursin("PersonLeavesVehicle"), line) & occursin("legMode=\"pt\"", line)
+                local this_containerID = replace(replace(string(rsplit(rsplit(line, "\" vehicle=")[2], "_")[2]), " " => ""), "\"/>" => "")
+            elseif occursin("PersonLeavesVehicle", line) & occursin("legMode=\"pt\"", line)
                 local this_actType = "leaveVehiclePt"
-                local this_containerID = replace(replace(string(rsplit(rsplit(this_line, "\" vehicle=")[2], "_")[2]), " " => ""), "\"/>" => "")
+                local this_containerID = replace(replace(string(rsplit(rsplit(line, "\" vehicle=")[2], "_")[2]), " " => ""), "\"/>" => "")
             #
             elseif occursin("PersonEntersVehicle", line) & occursin("legMode=\"pt\"", line)
                 local this_actType = "enterVehiclePt"
-                local this_containerID = replace(replace(string(rsplit(rsplit(this_line, "\" vehicle=")[2], "_")[2]), " " => ""), "\"/>" => "")
-            elseif occursin("PersonLeavesVehicle"), line) & occursin("legMode=\"pt\"", line)
+                local this_containerID = replace(replace(string(rsplit(rsplit(line, "\" vehicle=")[2], "_")[2]), " " => ""), "\"/>" => "")
+            elseif occursin("PersonLeavesVehicle", line) & occursin("legMode=\"pt\"", line)
                 local this_actType = "leaveVehiclePt"
-                local this_containerID = replace(replace(string(rsplit(rsplit(this_line, "\" vehicle=")[2], "_")[2]), " " => ""), "\"/>" => "")
+                local this_containerID = replace(replace(string(rsplit(rsplit(line, "\" vehicle=")[2], "_")[2]), " " => ""), "\"/>" => "")
 
 
 

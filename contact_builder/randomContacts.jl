@@ -15,20 +15,22 @@
 # agent_dict["42398601"].household_id
 # household_dict["948000"]
 
+
+
 for i in infected_agents
     global hh_contacts = []
     global other_contacts = []
-    local this_household_id = string(agent_dict[string(i)].household_id)
+    global this_household_id = string(agent_dict[string(i)].household_id)
     hh_contacts =  copy(household_dict[this_household_id].member_ids)
     deleteat!(hh_contacts, findall(x->x== i,hh_contacts)) # i has not contact with herselves
 
-    if agent_dict["$i"].hh_iso == false
+    if agent_dict["$i"].in_quar == false
         while length(other_contacts) < MAX_CONTACTS_OTHER
-            new_contact = randomchoice(agent_id_list)
+            local new_contact = random_keys(agent_dict, 1)[1]
 
             if new_contact ∉ other_contacts &&
                 new_contact != i &&
-                agent_dict[new_contact].hh_iso == false &&
+                agent_dict[new_contact].in_quar == false &&
                 length(agent_dict[new_contact].contacts_other) < MAX_CONTACTS_OTHER
 
                 push!(other_contacts, new_contact)

@@ -69,10 +69,10 @@ for i in 1:HH_NUMBER
 
         #this line actually creates the agents one by one
         #@eval $(Symbol("agent_$agent_number")) = $agent($agent_number, $i, $agent_age, $agent_sex, "susceptible", false, -1, -1, [], [], false)
-        agent_dict[ ("agent_$agent_number") ] = agent(agent_number, i, agent_age, agent_sex, "susceptible", false, -1, -1, [], [], false)
+        agent_dict[ ("$agent_number") ] = agent(agent_number, i, agent_age, agent_sex, "susceptible", false, -1, -1, [], [], false)
 
-        push!(hh_agent_list, "agent_$agent_number")
+        push!(hh_agent_list, "$agent_number")
     end
-    household_dict[ ("household_$household_number") ] = household(household_number, hh_agent_list)
+    household_dict[ ("$household_number") ] = household(household_number, hh_agent_list)
     hh_agent_list = nothing
 end

@@ -22,6 +22,11 @@ function exit_condition_run(infections, infections_cap, edge_proba)
     end
 end
 
+function random_keys(d::Dict, n::Int)
+    keys_array = collect(keys(d))
+    return sample(keys_array, min(n, length(keys_array)))
+end
+
 global init_output_writer = 0
 
 
@@ -82,10 +87,12 @@ for seed in SEEDS # triggers n realisations with same seed
         end
 
         include("./writeOutput.jl")
-        
+
         global ITERATION += 1
     end
 
-    include("./clearAgents.jl") # reset agents,statetistics etc to default for next run
+    if this_seed != SEEDS && ITERATION != ENDITER
+        include("./clearAgents.jl") # reset agents,statetistics etc to default for next run
+    end
 
 end

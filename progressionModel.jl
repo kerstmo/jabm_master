@@ -9,7 +9,7 @@ for i in infected_agents
 
     if recovery
         agent_dict[this_agent].state = "recovered"
-        agent_dict[this_agent].hh_iso = false
+        agent_dict[this_agent].in_quar = false
         agent_dict[this_agent].time_recov = ITERATION
 
         STATETISTICS["infected"] = STATETISTICS["infected"]-1

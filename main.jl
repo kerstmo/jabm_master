@@ -17,6 +17,7 @@ using CSV
 using DataFrames
 using Tables
 using Dates
+using Statistics
 
 
 ##############################
@@ -50,8 +51,8 @@ INIT_INF_SHARE = 0.01
 VACC_SHARE = 0.8
 
 
-SEEDS = 10
-ENDITER = 100
+SEEDS = 3
+ENDITER = 20
 
 
 # Download and gunzip OpenBerlinData population data from:
