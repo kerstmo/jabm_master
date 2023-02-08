@@ -10,7 +10,7 @@ mutable struct agent
     household_id::Int32
     home_zone::String
     state::String
-    hh_iso::Bool
+    in_quar::Bool
     time_infected::Int8
     time_recov::Int8
     contacts_hh
@@ -70,3 +70,6 @@ println("Create Agents .... DONE")
 # testdict = Dict(123 => xx)
 # push!(testdict[123].member_ids, 789)
 # testdict
+
+
+print(popdata)

@@ -65,8 +65,8 @@ DATA_NAME = "berlin-v5.5.3-1pct.output_persons.csv"
 OUTPUT_LOCATION = "output/"
 
 #which modules shall the programm use?
-populationBuilder = "randomPopulation.jl"
-contactBuilder = "randomContacts.jl"
+populationBuilder = "matsimPopulation.jl"
+contactBuilder = "matsimContacts.jl"
 initialInfections = "randomInitInfections.jl"
 initialVaccinations ="randomInitVaccinations.jl"
 infectionModel = "randomAndHouseholdInfectionModel.jl"
