@@ -9,7 +9,7 @@ println("------------")
 # Pkg.add("Tables")
 # Pkg.add("DataFrames")
 # Pkg.add("Dates")
-
+# Pkg.add("typemax")
 using Distributions
 using Random
 using Setfield
@@ -17,6 +17,7 @@ using CSV
 using DataFrames
 using Tables
 using Dates
+
 using Statistics
 
 
