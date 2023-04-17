@@ -3,13 +3,17 @@ println(" ")
 println("=.=.=.=.=.=.=.=.=.=.=.=.=.=.=.=")
 println("A New Hope")
 println("------------")
-
+# 
 # import Pkg
 # Pkg.add("Setfield")
 # Pkg.add("Tables")
 # Pkg.add("DataFrames")
 # Pkg.add("Dates")
-# Pkg.add("typemax")
+# Pkg.add("Random")
+# Pkg.add("Distributions")
+# Pkg.add("CSV")
+# Pkg.add("Statistics")
+
 using Distributions
 using Random
 using Setfield
@@ -60,10 +64,12 @@ ENDITER = 20
 # "https://svn.vsp.tu-berlin.de/repos/public-svn/matsim/scenarios/countries/de/berlin/berlin-v5.5-1pct/output-berlin-v5.5-1pct/output_persons.csv.gz";
 # edit DATA_LOCAITON and DATA_NAME
 
-DATA_LOCATION = "/media/mk/McDrive/jabm_data/"
+DATA_LOCATION = "F:\\jabm_data\\"
+#DATA_LOCATION = "/media/mk/McDrive/jabm_data/"
 DATA_NAME = "berlin-v5.5.3-1pct.output_persons.csv"
 
-OUTPUT_LOCATION = "output/"
+#OUTPUT_LOCATION = "output/"
+OUTPUT_LOCATION = "output\\"
 
 #which modules shall the programm use?
 populationBuilder = "matsimPopulation.jl"

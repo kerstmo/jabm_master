@@ -34,7 +34,11 @@ global contacts_df = DataFrame(time = String[],
                                     agentID_2 = String[],
                                     containerID = String[],
                                     containerType = String[],
+                                    this_x = String[],
+                                    this_y = String[],
                                     contactTime = Int32)
+
+
 
 
 # Open the XML file for reading
@@ -143,11 +147,11 @@ open(data, "r") do f
             #vehicle="pt
             elseif occursin("PersonEntersVehicle", line) & occursin("vehicle=\"pt", line) &! occursin("person=\"pt", line)
                 local this_actType = "pt"
-                this_containerID = "ptVehicle_" * string(rsplit(rsplit(line, "\" vehicle=\"")[2], "\"")[1])
+                local this_containerID = "ptVehicle_" * string(rsplit(rsplit(line, "\" vehicle=\"")[2], "\"")[1])
                 this_eventType = "actstart"
             elseif occursin("PersonLeavesVehicle", line) & occursin("vehicle=\"pt", line) &! occursin("person=\"pt", line)
                 local this_actType = "pt"
-                this_containerID = "ptVehicle_" * string(rsplit(rsplit(line, "\" vehicle=\"")[2], "\"")[1])
+                local this_containerID = "ptVehicle_" * string(rsplit(rsplit(line, "\" vehicle=\"")[2], "\"")[1])
                 this_eventType = "actend"
             end
 
@@ -171,6 +175,7 @@ open(data, "r") do f
                 this_actType != "pt interaction" &&
                 this_actType != "freight" &&
                 this_actType != "freight interaction"
+
                 if this_containerID ∉ keys(open_containers) && this_containerID != "unknown"
                     if this_actType == "home"
                         open_containers[("$this_containerID")] = container(this_actType, Dict(this_agentID => Dict(1 => ("0", this_time))), "0")
@@ -194,8 +199,37 @@ open(data, "r") do f
                         end
                     end
                 end
-            end
+                #TODO include inner forloop if agent enters container multiple times (i.e. home)
+                # vemiede ich doppelerfassung von pärchen?
+                if occursin("actend", line)
+                    # conti = open_containers["ptVehicle_pt_M11---17441_700_56_2"]
+                    conti = open_containers["$this_containerID"]
 
+                    for this_agentID in collect(keys(conti.agent_list))
+                        this_agent = conti.agent_list[this_agentID]
+
+                        for other_agentID in collect(keys(conti.agent_list))
+                            other_agent = conti.agent_list[other_agentID]
+
+                            if this_agentID != other_agentID
+                                # entry time of leaving agent %in% c(entry time staying agent, exit time staying agent)
+
+                                if this_agent[1][1]  <  this_agent[1][2]  <  other_agent[1][2]
+                                    this_contact_time =  parse(Float16, this_agent[1][1]) - max(parse(Float16, other_agent[1][2]), parse(Float16, this_agent[1][1]))
+                                    push!(df_rawActivities, [this_time,#when agent1 leaves
+                                                            this_agentID,
+                                                            other_agentID,
+                                                            this_containerID,
+                                                            this_actType,
+                                                            this_contact_time]
+                                    )
+
+                                end
+                            end
+                        end
+                    end
+                end
+            end
         end
     end
 end
