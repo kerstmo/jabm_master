@@ -5,7 +5,9 @@
 using LightXML, DataFrames
 
 # data= String(read("/media/mk/McDrive/jabm_data/berlin-v5.5.3-1pct.output_events.xml"))
-data= "/media/mk/McDrive/jabm_data/berlin-v5.5.3-1pct.output_events.xml"
+# data= "/media/mk/McDrive/jabm_data/berlin-v5.5.3-1pct.output_events.xml"
+data= "F:\\jabm_data\\berlin-v5.5.3-1pct.output_events.xml"
+
 
 
 mutable struct container
@@ -17,30 +19,78 @@ end
 open_containers = Dict()
 open_containers2 = Dict()
 
-
-
-global df_rawActivities = DataFrame(time = String[],
-                                    agentID = String[],
-                                    eventType = String[],
-                                    x = String[],
-                                    y = String[],
-                                    actType = String[],
-                                    containerID = String[])
-
-
-# fill, when agents leave
-global contacts_df = DataFrame(time = String[],
-                                    agentID_1 = String[],
-                                    agentID_2 = String[],
-                                    containerID = String[],
-                                    containerType = String[],
-                                    this_x = String[],
-                                    this_y = String[],
-                                    contactTime = Int32)
+function showPersonOrVehicle(searchstring::String, dataset::String)
+    println("              ")
+    println("========================================")
+    # Open the XML file for reading
+    open(dataset, "r") do f
+        for line in eachline(f)
+            if occursin( "person",  line )
+                if occursin( searchstring, line )
+                    println(line)
+                end 
+            end
+        end
+    end
+end
 
 
 
 
+
+
+# yet unclear which data is required for further modules, thus kept in two df_events
+    # df_events: record any event (an agent enters/leaves a container)
+    # df_contacts: record any bilateral contact (two agents are in the same container at the same time)
+        # fill, when agents leave. when agents leave a container they first have had to enter it (thus recorded in df_events)
+        # exception: first home leave of the day
+
+global df_events = DataFrame(time = String[],
+                             agentID = String[],
+                             containerID = String[],
+                             enter_leave = String[],
+                             actType = String[],
+                             x = String[],
+                             y = String[])
+
+global df_contacts = DataFrame(startTime = String[],
+                               endTime = String[],
+                               agentID = String[],
+                               contactID = String[],
+                               contactTime = String[],
+                               containerType = String[],
+                               containerID = String[],
+                               x = String[],
+                               y = String[]) 
+
+
+
+#print all lines containing string (i.e. show an agents itinerary or all events of an vehicle)
+showPersonOrVehicle("pt_S25---10145_109_24_9", data)
+showPersonOrVehicle("423068201", data)
+showPersonOrVehicle("work_12000.0", data)
+
+
+# Initializations
+    # agentIDs: records all processed agentIDs. primary use: initialisation of yet unprocessed agents (which start their day at home)
+    # containerIDs: create unique container IDs based on type (work, shop, etc.)
+    # lookup_ptInteraction: stores all pt interactions before entering pt vehicle. remove entry after use (agent can only be in 1 stop/station at a time)
+        #(used to determine x/y location of stop/station which is missing in enter/leave vehicle line)
+agentIDs = []
+containerIDs = []
+lookup_ptinteraction = Dict()
+lookup_agent_last = Dict()
+
+
+# searchstrings: if line does not contains one of this entries it is skipped
+# activities: basic acitivites for containr generation without transportation
+# todo: is this complete?
+searchstrings = ["home", "work", "shopping", "other", "leisure", 
+                 "pt interaction", "waitingForPt", "PersonEntersVehicle", "PersonLeavesVehicle"]
+activities = ["home", "work", "shopping", "other", "leisure"]
+
+
+# main loop. iterates over each line of input data (i/o stream)
 # Open the XML file for reading
 open(data, "r") do f
 
@@ -48,9 +98,12 @@ open(data, "r") do f
     linenumber = 1
     linecheck = 1
 
+    
+
     for line in eachline(f)
 
-        ### print counter to REPL
+
+        # count and print number of processed lines
         if linenumber % linecheck == 0
             println(linenumber)
             # println(line)
@@ -59,13 +112,118 @@ open(data, "r") do f
         linenumber = linenumber + 1
 
 
-        if occursin( "person",  line )
-            # if occursin( "61627901", line )
-            #     println(line)
-            # end
+        # events without personIDs can be skipped
+        # events withoud certain strings can be skipped as well
+        if !occursin("person=", line) | !any(occursin, searchstring, Ref(line))
+            continue 
+        end
 
+
+
+        
+            # events with pt interaction before waiting must be stored in dictionary. can be skipped afterwards
+        if occursin("pt interaction", line) & !occursin(this_agentID, keys(lookup_ptinteraction))
+            local this_x = rsplit(rsplit(line, "\" y=")[1], "x=\"")[2]
+            local this_y = rsplit(rsplit(line, "\" actType=")[1], "y=\"")[2]
+            lookup_ptinteraction[this_agentID] = [this_x, this_y, nothing]
+            continue
+        if occursin("pt interaction", line) & occursin(this_agentID, keys(lookup_ptinteraction))
             local this_agentID = rsplit(rsplit(line, "\" link")[1], "person=\"")[2]
             local this_time = replace(String(rsplit(rsplit(line, " type=")[1], "=")[2]), "\"" => "")
+            local this_type = "actend"
+            local this_actType = "pt"
+            local this_objectID = get(lookup_ptinteraction, this_agentID)[3]
+            local this_x = rsplit(rsplit(line, "\" y=")[1], "x=\"")[2]
+            local this_y = rsplit(rsplit(line, "\" actType=")[1], "y=\"")[2]            
+            delete!(lookup_agent_last, this_agentID)
+            continue
+        elseif occursin("waitingForPt", line)
+            local this_agentID = rsplit(rsplit(line, "\" link")[1], "person=\"")[2]
+            local this_time = replace(String(rsplit(rsplit(line, " type=")[1], "=")[2]), "\"" => "")
+            local this_type = "actstart"
+            local this_actType = "waitingForPt"
+            local this_x = get(lookup_ptinteraction, this_agentID)[1]
+            local this_y = get(lookup_ptinteraction, this_agentID)[2]
+        elseif occursin("PersonEntersVehicle", line) 
+            local this_agentID = rsplit(rsplit(line, "\" link")[1], "person=\"")[2]
+            local this_time = replace(String(rsplit(rsplit(line, " type=")[1], "=")[2]), "\"" => "")
+            local this_type1 = "actend"
+            local this_type2 = "actstart"
+            local this_actType1 = "waitingForPt"
+            local this_actType2 = "pt"
+            local this_objectID = rsplit(rsplit(line, "\"  />")[1], " vehicle=\"")[2]
+            local this_x = get(lookup_ptinteraction, this_agentID)[1]
+            local this_y = get(lookup_ptinteraction, this_agentID)[2]
+            lookup_ptinteraction[this_agentID] = [this_x, this_y, this_objectID]
+        elseif occursin("PersonLeavesVehicle", line)
+            local this_agentID = rsplit(rsplit(line, "\" link")[1], "person=\"")[2]
+            local this_time = replace(String(rsplit(rsplit(line, " type=")[1], "=")[2]), "\"" => "")
+            local this_type = "actend"
+            local this_actType = "pt"
+            local this_x = nothing
+            local this_y = nothing
+        else
+            local this_agentID = rsplit(rsplit(line, "\" link")[1], "person=\"")[2]
+            local this_time = replace(String(rsplit(rsplit(line, " type=")[1], "=")[2]), "\"" => "")
+            local this_type = rsplit(rsplit(line, "\" person=")[1], "type=\"")[2]
+            local this_actType = rsplit(rsplit(line, "\"  />")[1], "actType=\"")[2]
+            local this_x = rsplit(rsplit(line, "\" y=")[1], "x=\"")[2]
+            local this_y = rsplit(rsplit(line, "\" actType=")[1], "y=\"")[2]
+
+
+
+
+            # extract activity type information of current event
+            if occursin("actType=", line) & !occursin("pt_interaction", line)
+                local this_actType = rsplit(rsplit(rsplit(line, "\"  />")[1], "actType=\"")[2], "_")[1]
+            elseif  occursin("waitingForPt=", line) 
+                local this_actType = "waiting_for_pt"
+            
+                
+            end
+            
+
+
+            # extact container id from current line
+            if occursin("waitingForPt", line)
+                local this_container = String(["stopPt", "_x=", this_x, "_y=", this_y])
+            elseif occursin("PersonEntersVehicle", line) | occursin("PersonLeavesVehicle", line)
+                local this_container = String(["vehicle_",  rsplit(rsplit(line, "\"  />")[1], "vehicle=\"")[2]])
+            elseif any(occursin, activities, Ref(line))
+                local this_container = String([this_actType, "_x=", this_x, "_y=", this_y])
+            end
+        end
+
+
+
+        if !occursin(this_agentID, agentIDs)
+            
+            if !occursin("actType=\"home_")
+                println("ERROR")
+                break
+            end
+
+            push!(agentIDs, this_agentID)
+        end
+    end
+end
+
+
+
+
+
+
+
+
+
+
+
+
+priorline = line
+ 
+
+#todo: am ende des tages die startzeit der ersten homeaktivität überprüfen
+
 
             if occursin("x=", line)
                 local this_x = rsplit(rsplit(line, "\" y")[1], "x=\"")[2]
@@ -234,5 +392,5 @@ open(data, "r") do f
     end
 end
 
-
+print(df_rawActivities)
 open_containers["leisure_20400.0"]

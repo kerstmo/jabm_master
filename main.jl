@@ -4,7 +4,7 @@ println("=.=.=.=.=.=.=.=.=.=.=.=.=.=.=.=")
 println("A New Hope")
 println("------------")
 # 
-# import Pkg
+import Pkg
 # Pkg.add("Setfield")
 # Pkg.add("Tables")
 # Pkg.add("DataFrames")
@@ -13,6 +13,7 @@ println("------------")
 # Pkg.add("Distributions")
 # Pkg.add("CSV")
 # Pkg.add("Statistics")
+# Pkg.add("LightXML")
 
 using Distributions
 using Random
@@ -21,7 +22,7 @@ using CSV
 using DataFrames
 using Tables
 using Dates
-
+using LightXML
 using Statistics
 
 
@@ -73,13 +74,13 @@ OUTPUT_LOCATION = "output\\"
 
 #which modules shall the programm use?
 populationBuilder = "matsimPopulation.jl"
-contactBuilder = "matsimContacts.jl"
+contactBuilder = "randomContacts.jl"
 initialInfections = "randomInitInfections.jl"
 initialVaccinations ="randomInitVaccinations.jl"
 infectionModel = "randomAndHouseholdInfectionModel.jl"
 
-# whether contacts are updatd daily (ito. per each iteration) or remain same
-update_contacts = true
+# whether contacts are updatd daily (per each iteration) or remain same
+update_contacts = false
 
 include("./runner.jl") # handles one realisation
 

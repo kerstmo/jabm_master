@@ -39,6 +39,7 @@ for i in infected_agents
         end
     end
 
+    
     agent_dict["$i"].contacts_other = other_contacts
     agent_dict["$i"].contacts_hh = hh_contacts
     other_contacts = nothing

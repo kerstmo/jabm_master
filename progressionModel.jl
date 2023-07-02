@@ -1,8 +1,5 @@
 # agents recover after x days and end isolation.
 
-
-
-
 for i in infected_agents
     this_agent = string(i)
     recovery = (ITERATION - agent_dict[this_agent].time_infected) > DURATION_INFECTION

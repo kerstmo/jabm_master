@@ -43,6 +43,7 @@ SEEDS = collect(1:SEEDS)
 
 include(string("./population_builder/", populationBuilder)) # population remains same over all runs. create once
 
+seed = SEEDS[1]
 for seed in SEEDS # triggers n realisations with same seed
     Random.seed!(seed)
     global this_seed = seed

@@ -5,8 +5,8 @@ if init_output_writer == 0
     output_file = DataFrame([[], [], [], [], [], [], [], []],
             ["Seed", "Iteration", "Sus", "Inf", "cumInf", "Rec", "Iso", "Vac"])
     global output_dir_name  = string("output_", Dates.today(), Dates.format(now(), "_HHMM"))
-    mkdir(string(OUTPUT_LOCATION, output_dir_name))
-    CSV.write(string(OUTPUT_LOCATION, output_dir_name, "/", "infections"), output_file)
+    mkpath(string(OUTPUT_LOCATION, output_dir_name))
+    CSV.write(string(OUTPUT_LOCATION, output_dir_name, "\\", "infections"), output_file)
     global init_output_writer = 1
 end
 
@@ -17,7 +17,7 @@ next_row = DataFrame([[this_seed], [ITERATION], [get(STATETISTICS, "susceptible"
                         [get(STATETISTICS, "vaccinated", -1 )]],
         ["Seed", "Iteration", "Sus", "Inf", "cumInf", "Rec", "Iso", "Vac"])
 
-CSV.write(string(OUTPUT_LOCATION, "/",output_dir_name, "/", "infections"), next_row, append = true)
+CSV.write(string(OUTPUT_LOCATION, "\\",output_dir_name, "\\", "infections"), next_row, append = true)
 
 
 
